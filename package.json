@@ -1,0 +1,12 @@
+{
+  "name": "agendarpro",
+  "version": "1.0.0",
+  "description": "SaaS de Gestion Operativa AGENDARPRO",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

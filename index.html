@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGENDARPRO - Gestión Operativa</title>
+    <!-- Tailwind CSS vía CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 relative min-h-screen flex flex-col">
+
+    <!-- BARRA SUPERIOR BRANDING -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 px-3 sm:px-6 py-3 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-2 sm:gap-3">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-tr from-blue-700 to-indigo-600 rounded-xl flex items-center justify-center text-white font-black text-lg sm:text-xl shadow-md">
+                A
+            </div>
+            <span class="text-lg sm:text-xl font-black tracking-tight text-slate-900">AGENDAR<span class="text-blue-600">PRO</span></span>
+        </div>
+
+        <div class="flex items-center gap-1.5 sm:gap-2" id="auth-nav-container">
+            <button onclick="openAuthModal('register')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs transition">Regístrate</button>
+            <button onclick="openAuthModal('login')" class="bg-orange-600 hover:bg-orange-700 text-white font-bold px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-full text-xs shadow-sm transition">Iniciar sesión</button>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="p-3 sm:p-5 max-w-7xl mx-auto space-y-5 flex-grow w-full">
+
+        <!-- HEADER -->
+        <header class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <div>
+                <h1 class="text-base sm:text-xl font-bold text-slate-900">Panel de Control & Gestión de Servicios</h1>
+                <p class="text-xs text-slate-500">Asignación directa de trabajadores y agenda en tiempo real</p>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 self-start sm:self-auto">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Sistema en Vivo
+            </span>
+        </header>
+
+        <!-- SECCIÓN 1: REGISTRO Y MAPA -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            
+            <!-- FORMULARIO DE REGISTRO -->
+            <section class="lg:col-span-6 bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
+                <h2 class="text-sm sm:text-base font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                    📄 Registro de Nuevo Trabajo
+                </h2>
+
+                <form onsubmit="handleSaveOrReserveJob(event)" class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Nombre del Cliente</label>
+                            <input type="text" id="form-name" placeholder="Ej: Jhasmani Calizaya" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs focus:outline-none focus:border-blue-500" required />
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Teléfono</label>
+                            <input type="tel" id="form-phone" placeholder="Ej: 74201930" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs focus:outline-none focus:border-blue-500" required />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 block mb-1">Dirección Exacta (Actualiza Mapa)</label>
+                        <input type="text" id="form-address" value="La Paz, Bolivia" oninput="updateMapLocation(this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs focus:outline-none focus:border-blue-500" />
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 block mb-1">Trabajador de la Empresa Asignado</label>
+                        <select id="form-assignedWorker" class="w-full bg-slate-50 border border-blue-400 rounded-lg p-2 text-xs font-bold text-slate-800">
+                            <!-- Se llena dinámicamente -->
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Día a Agendar</label>
+                            <select id="form-selectedDay" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs font-semibold">
+                                <option value="0">Dom (11 Oct)</option>
+                                <option value="1" selected>Lun (12 Oct)</option>
+                                <option value="2">Mar (13 Oct)</option>
+                                <option value="3">Mié (14 Oct)</option>
+                                <option value="4">Jue (15 Oct)</option>
+                                <option value="5">Vie (16 Oct)</option>
+                                <option value="6">Sáb (17 Oct)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Hora</label>
+                            <input type="time" id="form-scheduledTime" value="14:00" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-1.5 text-xs font-semibold" />
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Fecha</label>
+                            <input type="date" id="form-scheduledDate" value="2026-10-12" lang="es" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-1.5 text-xs font-semibold" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 block mb-1">Detalle del Problema</label>
+                        <textarea id="form-description" rows="2" placeholder="Ej: Fuga de gas o agua..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs focus:outline-none focus:border-blue-500 resize-none" required></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-xs uppercase shadow-sm flex items-center justify-center gap-2 transition">
+                        ✓ Reservar y Agendar en la Empresa
+                    </button>
+                </form>
+            </section>
+
+            <!-- MAPA GOOGLE MAPS DINÁMICO -->
+            <section class="lg:col-span-6 bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-sm flex flex-col justify-between">
+                <div class="border-b pb-2 flex items-center justify-between">
+                    <h2 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+                        📍 Ubicación del Cliente
+                    </h2>
+                    <div class="flex gap-1.5">
+                        <a id="map-directions-btn" href="https://www.google.com/maps/dir/?api=1&destination=La%20Paz,%20Bolivia" target="_blank" class="bg-blue-50 border border-blue-300 text-blue-700 hover:bg-blue-100 px-2 py-1 rounded text-xs font-bold flex items-center gap-1 transition">
+                            🚗 Cómo llegar
+                        </a>
+                        <button onclick="toggleMapExpand()" class="bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 px-2 py-1 rounded text-xs font-semibold transition">
+                            🔍 Agrandar
+                        </button>
+                    </div>
+                </div>
+
+                <div id="map-container-wrapper" class="relative w-full bg-slate-200 rounded-lg overflow-hidden border border-slate-300 mt-3 h-64 sm:h-72 transition-all">
+                    <iframe id="google-maps-iframe" title="Google Maps" src="https://maps.google.com/maps?q=La%20Paz,%20Bolivia&t=&z=15&ie=UTF8&iwloc=&output=embed" class="w-full h-full border-0" allowfullscreen="" loading="lazy"></iframe>
+                    <div id="map-label-address" class="absolute top-2 left-2 bg-white/95 backdrop-blur-sm border border-slate-200 px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-700 shadow-sm max-w-[90%] truncate">
+                        📍 Ubicación: La Paz, Bolivia
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECCIÓN 2: TRABAJADORES DE LA EMPRESA & CALCULADORA -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+            <!-- TRABAJADORES DE LA EMPRESA -->
+            <section class="lg:col-span-6 bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
+                <div class="border-b pb-2 flex items-center justify-between">
+                    <h2 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+                        👥 TRABAJADORES (<span id="workers-count">6</span>)
+                    </h2>
+                    <span class="text-[11px] text-slate-500">✏️ Edita nombre y cargo</span>
+                </div>
+
+                <div id="workers-cards-container" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 max-h-[380px] overflow-y-auto pr-1">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </section>
+
+            <!-- CALCULADORA & CUADERNO -->
+            <section class="lg:col-span-6 bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
+                <h2 class="text-sm sm:text-base font-bold text-slate-900 border-b pb-2 flex items-center gap-2">
+                    🧮 Calculadora & Apuntes Rápidos
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-start">
+                    
+                    <!-- CALCULADORA -->
+                    <div class="sm:col-span-6 bg-[#121212] p-3.5 rounded-2xl shadow-xl space-y-2.5 border border-slate-800 w-full">
+                        <div id="calc-display" class="bg-[#eab308] p-2.5 rounded-xl text-right font-mono text-black font-black text-xl sm:text-2xl tracking-wider overflow-hidden min-h-[55px] flex flex-col justify-end shadow-inner">
+                            <span class="text-[9px] text-black/60 block font-normal text-left">CALCULADORA PRO</span>
+                            0
+                        </div>
+                        <div class="grid grid-cols-4 gap-1.5 text-white font-bold text-xs sm:text-sm">
+                            <button onclick="handleCalcPress('7')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">7</button>
+                            <button onclick="handleCalcPress('8')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">8</button>
+                            <button onclick="handleCalcPress('9')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">9</button>
+                            <button onclick="handleCalcPress('-')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">-</button>
+                            
+                            <button onclick="handleCalcPress('4')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">4</button>
+                            <button onclick="handleCalcPress('5')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">5</button>
+                            <button onclick="handleCalcPress('6')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">6</button>
+                            <button onclick="handleCalcPress('+')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">+</button>
+                            
+                            <button onclick="handleCalcPress('1')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">1</button>
+                            <button onclick="handleCalcPress('2')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">2</button>
+                            <button onclick="handleCalcPress('3')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">3</button>
+                            <button onclick="handleCalcPress('=')" class="bg-[#eab308] text-black hover:bg-amber-400 p-2.5 rounded-xl row-span-2 font-black text-base flex items-center justify-center">=</button>
+                            
+                            <button onclick="handleCalcPress('0')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">0</button>
+                            <button onclick="handleCalcPress('*')" class="bg-[#333333] hover:bg-[#444444] p-2.5 rounded-xl">*</button>
+                            <button onclick="handleCalcPress('C')" class="bg-red-700 hover:bg-red-600 p-2.5 rounded-xl">C</button>
+                        </div>
+                    </div>
+
+                    <!-- CUADERNO -->
+                    <div class="sm:col-span-6 bg-amber-50/90 border border-amber-200 rounded-2xl p-3.5 space-y-2 min-h-[250px] flex flex-col justify-between shadow-inner w-full">
+                        <div class="flex justify-between items-center border-b border-amber-200 pb-1.5">
+                            <span class="text-xs font-bold text-amber-900 flex items-center gap-1">📖 Cuaderno de Notas</span>
+                            <button onclick="document.getElementById('notebook-notes').value=''" class="text-amber-700 hover:text-red-600 text-xs font-bold">🗑️ Limpiar</button>
+                        </div>
+                        <textarea id="notebook-notes" placeholder="Escribe notas, materiales o precios aquí..." class="w-full bg-transparent border-0 text-xs text-amber-950 font-mono resize-none focus:outline-none flex-1 min-h-[170px] leading-relaxed"></textarea>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- SECCIÓN 3: AGENDA SEMANAL EN ESPAÑOL -->
+        <section class="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 gap-2">
+                <h2 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+                    📅 Agenda Semanal de Servicios (Lunes a Domingo)
+                </h2>
+                <!-- LEYENDA EN ESPAÑOL -->
+                <div class="flex flex-wrap items-center gap-2.5 text-xs font-semibold text-slate-600">
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span> Programado</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> En Progreso</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> Completado</span>
+                </div>
+            </div>
+
+            <!-- GRILLA ADAPTABLE -->
+            <div id="weekly-agenda-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
+                <!-- Se renderiza completamente limpio por JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE AUTENTICACIÓN COMPLETO CON CORREO -->
+    <div id="auth-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full space-y-4 border shadow-2xl relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
+            <h3 id="auth-modal-title" class="text-lg font-bold text-slate-900">Iniciar Sesión</h3>
+            
+            <form onsubmit="handleAuthSubmit(event)" class="space-y-3">
+                <div id="auth-name-field" class="hidden">
+                    <label class="text-xs font-semibold text-slate-600 block mb-1">Nombre Completo / Empresa</label>
+                    <input type="text" id="auth-name" placeholder="Ej: Jhasmani Rejas" class="w-full border rounded-lg p-2 text-xs focus:outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-slate-600 block mb-1">Correo Electrónico</label>
+                    <input type="email" id="auth-email" placeholder="usuario@ejemplo.com" class="w-full border rounded-lg p-2 text-xs focus:outline-none focus:border-blue-500" required />
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-slate-600 block mb-1">Contraseña</label>
+                    <input type="password" id="auth-password" placeholder="••••••••" class="w-full border rounded-lg p-2 text-xs focus:outline-none focus:border-blue-500" required />
+                </div>
+                <button type="submit" id="auth-btn-submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 rounded-lg text-xs transition">
+                    Ingresar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE LÓGICA -->
+    <script>
+        // Días de la semana en español
+        const daysOfWeek = [
+            { day: 'Dom', index: 0, date: '11 Oct' },
+            { day: 'Lun', index: 1, date: '12 Oct' },
+            { day: 'Mar', index: 2, date: '13 Oct' },
+            { day: 'Mié', index: 3, date: '14 Oct' },
+            { day: 'Jue', index: 4, date: '15 Oct' },
+            { day: 'Vie', index: 5, date: '16 Oct' },
+            { day: 'Sáb', index: 6, date: '17 Oct' }
+        ];
+
+        // Lista base de trabajadores
+        let workers = [
+            { id: 1, name: 'Jhasmani Rejas', role: 'Plomero / Sanitario', icon: '🛠️', status: 'disponible', selectedDay: 1, selectedTime: '09:00' },
+            { id: 2, name: 'Carlos Mendoza', role: 'Electricista Pro', icon: '⚡', status: 'ocupado', selectedDay: 2, selectedTime: '14:30' },
+            { id: 3, name: 'Ana Silva', role: 'Especialista General', icon: '🧰', status: 'disponible', selectedDay: 5, selectedTime: '16:00' },
+            { id: 4, name: 'Mario Flores', role: 'Albañil / Mantenimiento', icon: '🔧', status: 'disponible', selectedDay: 1, selectedTime: '11:00' },
+            { id: 5, name: 'Lucía Gutiérrez', role: 'Técnica Sanitaria', icon: '🛠️', status: 'ocupado', selectedDay: 3, selectedTime: '10:00' },
+            { id: 6, name: 'Roberto Paz', role: 'Electricista', icon: '⚡', status: 'disponible', selectedDay: 4, selectedTime: '15:00' }
+        ];
+
+        // AGENDA 100% LIMPIA (EN BLANCO PARA USO REAL)
+        let scheduledJobs = [];
+
+        let editingWorkerId = null;
+        let currentUser = null;
+        let authModeState = 'login';
+
+        // Llenar select de trabajadores
+        function renderWorkerSelect() {
+            const select = document.getElementById('form-assignedWorker');
+            select.innerHTML = workers.map(w => `
+                <option value="${w.id}">
+                    ${w.icon} ${w.name} - ${w.role} (${w.status === 'disponible' ? '🟢 Disponible' : '🔴 Ocupado'})
+                </option>
+            `).join('');
+        }
+
+        // Renderizar trabajadores
+        function renderWorkerCards() {
+            const container = document.getElementById('workers-cards-container');
+            document.getElementById('workers-count').innerText = workers.length;
+
+            container.innerHTML = workers.map(worker => {
+                const isEditing = editingWorkerId === worker.id;
+                
+                return `
+                    <div class="border rounded-xl p-2.5 bg-slate-50 border-slate-200 flex flex-col justify-between space-y-2">
+                        <div class="flex items-center gap-2 w-full">
+                            <div class="w-8 h-8 rounded-lg bg-blue-100 border border-blue-300 flex items-center justify-center text-base flex-shrink-0">
+                                ${worker.icon}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                ${isEditing ? `
+                                    <div class="space-y-1 bg-white p-1 rounded border shadow-sm">
+                                        <input type="text" id="temp-name-${worker.id}" value="${worker.name}" class="w-full border rounded px-1 py-0.5 text-xs font-bold" />
+                                        <input type="text" id="temp-role-${worker.id}" value="${worker.role}" class="w-full border rounded px-1 py-0.5 text-[10px]" />
+                                        <button onclick="saveWorkerEdit(${worker.id})" class="w-full bg-emerald-600 text-white py-0.5 rounded text-[10px] font-bold">Guardar</button>
+                                    </div>
+                                ` : `
+                                    <div class="flex items-start justify-between gap-1">
+                                        <div class="truncate">
+                                            <h3 class="text-xs font-bold text-slate-900 truncate">${worker.name}</h3>
+                                            <span class="text-[10px] text-slate-500 block truncate">${worker.role}</span>
+                                        </div>
+                                        <button onclick="startEditingWorker(${worker.id})" class="text-slate-400 hover:text-blue-600 text-xs flex-shrink-0" title="Editar">✏️</button>
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+
+                        <button onclick="toggleWorkerStatus(${worker.id})" class="w-full py-1 rounded text-[10px] font-bold uppercase transition-all text-white ${
+                            worker.status === 'disponible' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'
+                        }">
+                            ${worker.status === 'disponible' ? '🟢 Disponible' : '🔴 Ocupado'}
+                        </button>
+
+                        <div class="space-y-1 bg-white p-1.5 rounded border text-xs">
+                            <div class="grid grid-cols-2 gap-1">
+                                <select onchange="updateWorkerSelection(${worker.id}, 'selectedDay', this.value)" class="bg-slate-50 border rounded p-1 text-[10px] font-semibold">
+                                    ${daysOfWeek.map(d => `<option value="${d.index}" ${worker.selectedDay === d.index ? 'selected' : ''}>${d.day}</option>`).join('')}
+                                </select>
+                                <input type="time" value="${worker.selectedTime}" onchange="updateWorkerSelection(${worker.id}, 'selectedTime', this.value)" class="bg-slate-50 border rounded p-1 text-[10px] font-semibold" />
+                            </div>
+                        </div>
+
+                        <button onclick="assignWorkerFromCard(${worker.id})" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 rounded-lg text-xs transition">
+                            Asignar
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Renderizar Agenda Semanal en Español (Sin registros iniciales)
+        function renderWeeklyAgenda() {
+            const grid = document.getElementById('weekly-agenda-grid');
+            grid.innerHTML = daysOfWeek.map((d, index) => {
+                const dayJobs = scheduledJobs.filter(job => Number(job.dayIndex) === index);
+                
+                const jobsHTML = dayJobs.map(job => `
+                    <div class="p-2 rounded text-[11px] text-white font-medium shadow-sm space-y-1 relative ${
+                        job.status === 'Scheduled' ? 'bg-blue-600' : job.status === 'InProgress' ? 'bg-amber-500' : 'bg-emerald-600'
+                    }">
+                        <div class="flex justify-between items-start">
+                            <div class="font-bold line-clamp-1">${job.title}</div>
+                            <button onclick="cancelJob(${job.id})" class="text-white bg-black/30 hover:bg-red-700 px-1.5 rounded text-[10px]" title="Cancelar/Eliminar">✕</button>
+                        </div>
+                        <div class="text-[10px] opacity-90">${job.time} - ${job.client}</div>
+                        <div class="text-[9px] bg-black/25 rounded px-1.5 py-0.5 inline-block font-bold">👷 ${job.tech}</div>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-2 min-h-[150px] flex flex-col">
+                        <div class="text-center border-b border-slate-200 pb-1 mb-2">
+                            <span class="text-xs font-bold text-slate-700 block">${d.day}</span>
+                            <span class="text-[10px] text-slate-400">${d.date}</span>
+                        </div>
+                        <div class="space-y-1.5 flex-1 overflow-y-auto max-h-[150px]">
+                            ${dayJobs.length === 0 ? '<div class="text-[10px] text-slate-400 text-center py-8 italic">Sin reservas</div>' : jobsHTML}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Funciones de estado
+        function toggleWorkerStatus(id) {
+            workers = workers.map(w => w.id === id ? { ...w, status: w.status === 'disponible' ? 'ocupado' : 'disponible' } : w);
+            renderWorkerCards();
+            renderWorkerSelect();
+        }
+
+        function startEditingWorker(id) {
+            editingWorkerId = id;
+            renderWorkerCards();
+        }
+
+        function saveWorkerEdit(id) {
+            const name = document.getElementById(`temp-name-${id}`).value;
+            const role = document.getElementById(`temp-role-${id}`).value;
+            if(name.trim()) {
+                workers = workers.map(w => w.id === id ? { ...w, name: name.trim(), role: role.trim() || 'Técnico' } : w);
+            }
+            editingWorkerId = null;
+            renderWorkerCards();
+            renderWorkerSelect();
+        }
+
+        function updateWorkerSelection(id, field, val) {
+            workers = workers.map(w => w.id === id ? { ...w, [field]: field === 'selectedDay' ? Number(val) : val } : w);
+            renderWorkerCards();
+        }
+
+        // Registrar nuevo trabajo
+        function handleSaveOrReserveJob(e) {
+            e.preventDefault();
+            const client = document.getElementById('form-name').value;
+            const description = document.getElementById('form-description').value;
+            const workerId = document.getElementById('form-assignedWorker').value;
+            const dayIndex = Number(document.getElementById('form-selectedDay').value);
+            const time = document.getElementById('form-scheduledTime').value;
+            const worker = workers.find(w => String(w.id) === String(workerId));
+
+            scheduledJobs.push({
+                id: Date.now(),
+                title: description,
+                client: client,
+                dayIndex: dayIndex,
+                time: time,
+                status: 'Scheduled',
+                tech: worker ? worker.name : 'Sin Asignar'
+            });
+
+            renderWeeklyAgenda();
+            alert(`✅ ¡Servicio agendado con éxito para ${client}!`);
+            document.getElementById('form-name').value = '';
+            document.getElementById('form-description').value = '';
+            document.getElementById('form-phone').value = '';
+        }
+
+        function assignWorkerFromCard(workerId) {
+            const worker = workers.find(w => w.id === workerId);
+            const client = document.getElementById('form-name').value || 'Cliente General';
+            const description = document.getElementById('form-description').value || 'Servicio Técnico';
+
+            scheduledJobs.push({
+                id: Date.now(),
+                title: description,
+                client: client,
+                dayIndex: Number(worker.selectedDay),
+                time: worker.selectedTime,
+                status: 'Scheduled',
+                tech: worker.name
+            });
+
+            renderWeeklyAgenda();
+            alert(`✅ ${worker.name} asignado para ${client} el día ${daysOfWeek[worker.selectedDay].day}.`);
+        }
+
+        function cancelJob(jobId) {
+            if(confirm('¿Deseas eliminar este agendamiento?')) {
+                scheduledJobs = scheduledJobs.filter(j => j.id !== jobId);
+                renderWeeklyAgenda();
+            }
+        }
+
+        // Mapa dinámico
+        function updateMapLocation(address) {
+            const iframe = document.getElementById('google-maps-iframe');
+            const label = document.getElementById('map-label-address');
+            const btn = document.getElementById('map-directions-btn');
+            const encoded = encodeURIComponent(address || 'La Paz, Bolivia');
+            iframe.src = `https://maps.google.com/maps?q=${encoded}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+            label.innerText = `📍 Ubicación: ${address || 'La Paz, Bolivia'}`;
+            btn.href = `https://www.google.com/maps/dir/?api=1&destination=${encoded}`;
+        }
+
+        let isMapExpanded = false;
+        function toggleMapExpand() {
+            isMapExpanded = !isMapExpanded;
+            const wrapper = document.getElementById('map-container-wrapper');
+            wrapper.className = isMapExpanded ? 'relative w-full bg-slate-200 rounded-lg overflow-hidden border border-slate-300 mt-3 h-96 sm:h-[450px] transition-all' : 'relative w-full bg-slate-200 rounded-lg overflow-hidden border border-slate-300 mt-3 h-64 sm:h-72 transition-all';
+        }
+
+        // Calculadora
+        let calcVal = '0';
+        function handleCalcPress(val) {
+            const display = document.getElementById('calc-display');
+            if (val === 'C') {
+                calcVal = '0';
+            } else if (val === '=') {
+                try {
+                    const clean = calcVal.replace(/[^0-9+\-*/.]/g, '');
+                    calcVal = String(Function(`"use strict"; return (${clean})`)());
+                } catch { calcVal = 'Error'; }
+            } else {
+                calcVal = calcVal === '0' || calcVal === 'Error' ? val : calcVal + val;
+            }
+            display.innerHTML = `<span class="text-[9px] text-black/60 block font-normal text-left">CALCULADORA PRO</span>${calcVal}`;
+        }
+
+        // Modal de Autenticación con Correo
+        function openAuthModal(mode) {
+            authModeState = mode;
+            document.getElementById('auth-modal-title').innerText = mode === 'login' ? 'Iniciar Sesión' : 'Registro de Cuenta';
+            document.getElementById('auth-btn-submit').innerText = mode === 'login' ? 'Ingresar' : 'Crear Cuenta';
+            document.getElementById('auth-name-field').className = mode === 'register' ? 'block' : 'hidden';
+            document.getElementById('auth-modal').className = 'fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50 p-4';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').className = 'fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4';
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const nameInput = document.getElementById('auth-name').value;
+            currentUser = { 
+                email: email,
+                name: nameInput || email.split('@')[0] 
+            };
+
+            document.getElementById('auth-nav-container').innerHTML = `
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-slate-700 hidden sm:inline">Hola, <span class="text-blue-600">${currentUser.name}</span></span>
+                    <button onclick="location.reload()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold transition">Salir</button>
+                </div>
+            `;
+            closeAuthModal();
+            alert(`¡Sesión iniciada con éxito con el correo: ${currentUser.email}!`);
+        }
+
+        // Inicializar
+        renderWorkerSelect();
+        renderWorkerCards();
+        renderWeeklyAgenda();
+    </script>
+</body>
+</html>
