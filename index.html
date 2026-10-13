@@ -7,7 +7,7 @@
     <!-- Tailwind CSS vía CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 relative min-h-screen flex flex-col">
+<body class="bg-slate-100 font-sans text-slate-800 relative min-h-screen flex flex-col pb-16">
 
     <!-- BARRA SUPERIOR BRANDING -->
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 px-3 sm:px-6 py-3 flex items-center justify-between shadow-sm">
@@ -18,7 +18,7 @@
             <span class="text-lg sm:text-xl font-black tracking-tight text-slate-900">AGENDAR<span class="text-blue-600">PRO</span></span>
         </div>
 
-        <div class="flex items-center gap-1.5 sm:gap-2" id="auth-nav-container">
+        <div class="flex items-center gap-2" id="auth-nav-container">
             <button onclick="openAuthModal('register')" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs transition">Regístrate</button>
             <button onclick="openAuthModal('login')" class="bg-orange-600 hover:bg-orange-700 text-white font-bold px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-full text-xs shadow-sm transition">Iniciar sesión</button>
         </div>
@@ -73,15 +73,15 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <div>
-                            <label class="text-xs font-semibold text-slate-600 block mb-1">Día a Agendar</label>
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Día de la Semana</label>
                             <select id="form-selectedDay" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs font-semibold">
-                                <option value="0">Dom (11 Oct)</option>
-                                <option value="1" selected>Lun (12 Oct)</option>
-                                <option value="2">Mar (13 Oct)</option>
-                                <option value="3">Mié (14 Oct)</option>
-                                <option value="4">Jue (15 Oct)</option>
-                                <option value="5">Vie (16 Oct)</option>
-                                <option value="6">Sáb (17 Oct)</option>
+                                <option value="0">Dom (Domingo)</option>
+                                <option value="1" selected>Lun (Lunes)</option>
+                                <option value="2">Mar (Martes)</option>
+                                <option value="3">Mié (Miércoles)</option>
+                                <option value="4">Jue (Jueves)</option>
+                                <option value="5">Vie (Viernes)</option>
+                                <option value="6">Sáb (Sábado)</option>
                             </select>
                         </div>
                         <div>
@@ -89,8 +89,8 @@
                             <input type="time" id="form-scheduledTime" value="14:00" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-1.5 text-xs font-semibold" />
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-slate-600 block mb-1">Fecha</label>
-                            <input type="date" id="form-scheduledDate" value="2026-10-12" lang="es" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-1.5 text-xs font-semibold" />
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Fecha (Día/Mes/Año)</label>
+                            <input type="text" id="form-scheduledDate" value="12/10/2026" placeholder="DD/MM/AAAA" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-1.5 text-xs font-semibold text-slate-800" />
                         </div>
                     </div>
 
@@ -130,7 +130,7 @@
             </section>
         </div>
 
-        <!-- SECCIÓN 2: TRABAJADORES DE LA EMPRESA & CALCULADORA -->
+        <!-- SECCIÓN 2: TRABAJADORES & CALCULADORA -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
             <!-- TRABAJADORES DE LA EMPRESA -->
@@ -196,13 +196,12 @@
             </section>
         </div>
 
-        <!-- SECCIÓN 3: AGENDA SEMANAL EN ESPAÑOL -->
+        <!-- SECCIÓN 3: AGENDA SEMANAL -->
         <section class="bg-white border border-slate-200 rounded-xl p-4 sm:p-5 shadow-sm space-y-4">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 gap-2">
                 <h2 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
                     📅 Agenda Semanal de Servicios (Lunes a Domingo)
                 </h2>
-                <!-- LEYENDA EN ESPAÑOL -->
                 <div class="flex flex-wrap items-center gap-2.5 text-xs font-semibold text-slate-600">
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span> Programado</span>
                     <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> En Progreso</span>
@@ -210,15 +209,22 @@
                 </div>
             </div>
 
-            <!-- GRILLA ADAPTABLE -->
             <div id="weekly-agenda-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
-                <!-- Se renderiza completamente limpio por JS -->
+                <!-- Se llena por JS -->
             </div>
         </section>
 
     </main>
 
-    <!-- MODAL DE AUTENTICACIÓN COMPLETO CON CORREO -->
+    <!-- BOTÓN WHATSAPP -->
+    <a href="https://wa.me/59174201930?text=Hola,%20deseo%20consultar%20sobre%20un%20agendamiento%20en%20AGENDARPRO" target="_blank" class="fixed bottom-5 right-5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-3 rounded-full shadow-2xl flex items-center gap-2 z-50 transition transform hover:scale-105">
+        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+        </svg>
+        <span class="text-xs sm:text-sm font-bold">WhatsApp (+591 74201930)</span>
+    </a>
+
+    <!-- MODAL AUTENTICACIÓN -->
     <div id="auth-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl p-6 max-w-sm w-full space-y-4 border shadow-2xl relative">
             <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold text-lg">✕</button>
@@ -244,21 +250,20 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE LÓGICA -->
+    <!-- SCRIPT CON LOCALSTORAGE -->
     <script>
-        // Días de la semana en español
         const daysOfWeek = [
-            { day: 'Dom', index: 0, date: '11 Oct' },
-            { day: 'Lun', index: 1, date: '12 Oct' },
-            { day: 'Mar', index: 2, date: '13 Oct' },
-            { day: 'Mié', index: 3, date: '14 Oct' },
-            { day: 'Jue', index: 4, date: '15 Oct' },
-            { day: 'Vie', index: 5, date: '16 Oct' },
-            { day: 'Sáb', index: 6, date: '17 Oct' }
+            { day: 'Lun', name: 'Lunes', index: 1, date: '12 Oct' },
+            { day: 'Mar', name: 'Martes', index: 2, date: '13 Oct' },
+            { day: 'Mié', name: 'Miércoles', index: 3, date: '14 Oct' },
+            { day: 'Jue', name: 'Jueves', index: 4, date: '15 Oct' },
+            { day: 'Vie', name: 'Viernes', index: 5, date: '16 Oct' },
+            { day: 'Sáb', name: 'Sábado', index: 6, date: '17 Oct' },
+            { day: 'Dom', name: 'Domingo', index: 0, date: '18 Oct' }
         ];
 
-        // Lista base de trabajadores
-        let workers = [
+        // CARGAR TRABAJADORES DESDE LOCALSTORAGE O USAR PREDETERMINADOS
+        let workers = JSON.parse(localStorage.getItem('agendarpro_workers')) || [
             { id: 1, name: 'Jhasmani Rejas', role: 'Plomero / Sanitario', icon: '🛠️', status: 'disponible', selectedDay: 1, selectedTime: '09:00' },
             { id: 2, name: 'Carlos Mendoza', role: 'Electricista Pro', icon: '⚡', status: 'ocupado', selectedDay: 2, selectedTime: '14:30' },
             { id: 3, name: 'Ana Silva', role: 'Especialista General', icon: '🧰', status: 'disponible', selectedDay: 5, selectedTime: '16:00' },
@@ -267,14 +272,18 @@
             { id: 6, name: 'Roberto Paz', role: 'Electricista', icon: '⚡', status: 'disponible', selectedDay: 4, selectedTime: '15:00' }
         ];
 
-        // AGENDA 100% LIMPIA (EN BLANCO PARA USO REAL)
-        let scheduledJobs = [];
+        // CARGAR AGENDAS DESDE LOCALSTORAGE O EMPEZAR VACÍO
+        let scheduledJobs = JSON.parse(localStorage.getItem('agendarpro_jobs')) || [];
 
         let editingWorkerId = null;
         let currentUser = null;
-        let authModeState = 'login';
 
-        // Llenar select de trabajadores
+        // FUNCIÓN PARA GUARDAR EN LA MEMORIA DEL NAVEGADOR
+        function saveData() {
+            localStorage.setItem('agendarpro_workers', JSON.stringify(workers));
+            localStorage.setItem('agendarpro_jobs', JSON.stringify(scheduledJobs));
+        }
+
         function renderWorkerSelect() {
             const select = document.getElementById('form-assignedWorker');
             select.innerHTML = workers.map(w => `
@@ -284,7 +293,6 @@
             `).join('');
         }
 
-        // Renderizar trabajadores
         function renderWorkerCards() {
             const container = document.getElementById('workers-cards-container');
             document.getElementById('workers-count').innerText = workers.length;
@@ -340,11 +348,10 @@
             }).join('');
         }
 
-        // Renderizar Agenda Semanal en Español (Sin registros iniciales)
         function renderWeeklyAgenda() {
             const grid = document.getElementById('weekly-agenda-grid');
-            grid.innerHTML = daysOfWeek.map((d, index) => {
-                const dayJobs = scheduledJobs.filter(job => Number(job.dayIndex) === index);
+            grid.innerHTML = daysOfWeek.map((d) => {
+                const dayJobs = scheduledJobs.filter(job => Number(job.dayIndex) === d.index);
                 
                 const jobsHTML = dayJobs.map(job => `
                     <div class="p-2 rounded text-[11px] text-white font-medium shadow-sm space-y-1 relative ${
@@ -352,7 +359,7 @@
                     }">
                         <div class="flex justify-between items-start">
                             <div class="font-bold line-clamp-1">${job.title}</div>
-                            <button onclick="cancelJob(${job.id})" class="text-white bg-black/30 hover:bg-red-700 px-1.5 rounded text-[10px]" title="Cancelar/Eliminar">✕</button>
+                            <button onclick="cancelJob(${job.id})" class="text-white bg-black/30 hover:bg-red-700 px-1.5 rounded text-[10px]" title="Cancelar">✕</button>
                         </div>
                         <div class="text-[10px] opacity-90">${job.time} - ${job.client}</div>
                         <div class="text-[9px] bg-black/25 rounded px-1.5 py-0.5 inline-block font-bold">👷 ${job.tech}</div>
@@ -362,8 +369,8 @@
                 return `
                     <div class="bg-slate-50 border border-slate-200 rounded-lg p-2 min-h-[150px] flex flex-col">
                         <div class="text-center border-b border-slate-200 pb-1 mb-2">
-                            <span class="text-xs font-bold text-slate-700 block">${d.day}</span>
-                            <span class="text-[10px] text-slate-400">${d.date}</span>
+                            <span class="text-xs font-bold text-slate-800 block">${d.day} (${d.name})</span>
+                            <span class="text-[10px] text-slate-500 font-semibold">${d.date}</span>
                         </div>
                         <div class="space-y-1.5 flex-1 overflow-y-auto max-h-[150px]">
                             ${dayJobs.length === 0 ? '<div class="text-[10px] text-slate-400 text-center py-8 italic">Sin reservas</div>' : jobsHTML}
@@ -373,9 +380,9 @@
             }).join('');
         }
 
-        // Funciones de estado
         function toggleWorkerStatus(id) {
             workers = workers.map(w => w.id === id ? { ...w, status: w.status === 'disponible' ? 'ocupado' : 'disponible' } : w);
+            saveData();
             renderWorkerCards();
             renderWorkerSelect();
         }
@@ -392,16 +399,16 @@
                 workers = workers.map(w => w.id === id ? { ...w, name: name.trim(), role: role.trim() || 'Técnico' } : w);
             }
             editingWorkerId = null;
+            saveData();
             renderWorkerCards();
             renderWorkerSelect();
         }
 
         function updateWorkerSelection(id, field, val) {
             workers = workers.map(w => w.id === id ? { ...w, [field]: field === 'selectedDay' ? Number(val) : val } : w);
-            renderWorkerCards();
+            saveData();
         }
 
-        // Registrar nuevo trabajo
         function handleSaveOrReserveJob(e) {
             e.preventDefault();
             const client = document.getElementById('form-name').value;
@@ -421,6 +428,7 @@
                 tech: worker ? worker.name : 'Sin Asignar'
             });
 
+            saveData();
             renderWeeklyAgenda();
             alert(`✅ ¡Servicio agendado con éxito para ${client}!`);
             document.getElementById('form-name').value = '';
@@ -443,18 +451,19 @@
                 tech: worker.name
             });
 
+            saveData();
             renderWeeklyAgenda();
-            alert(`✅ ${worker.name} asignado para ${client} el día ${daysOfWeek[worker.selectedDay].day}.`);
+            alert(`✅ ${worker.name} asignado para ${client} el día ${daysOfWeek.find(d => d.index === worker.selectedDay).name}.`);
         }
 
         function cancelJob(jobId) {
             if(confirm('¿Deseas eliminar este agendamiento?')) {
                 scheduledJobs = scheduledJobs.filter(j => j.id !== jobId);
+                saveData();
                 renderWeeklyAgenda();
             }
         }
 
-        // Mapa dinámico
         function updateMapLocation(address) {
             const iframe = document.getElementById('google-maps-iframe');
             const label = document.getElementById('map-label-address');
@@ -472,7 +481,6 @@
             wrapper.className = isMapExpanded ? 'relative w-full bg-slate-200 rounded-lg overflow-hidden border border-slate-300 mt-3 h-96 sm:h-[450px] transition-all' : 'relative w-full bg-slate-200 rounded-lg overflow-hidden border border-slate-300 mt-3 h-64 sm:h-72 transition-all';
         }
 
-        // Calculadora
         let calcVal = '0';
         function handleCalcPress(val) {
             const display = document.getElementById('calc-display');
@@ -489,9 +497,7 @@
             display.innerHTML = `<span class="text-[9px] text-black/60 block font-normal text-left">CALCULADORA PRO</span>${calcVal}`;
         }
 
-        // Modal de Autenticación con Correo
         function openAuthModal(mode) {
-            authModeState = mode;
             document.getElementById('auth-modal-title').innerText = mode === 'login' ? 'Iniciar Sesión' : 'Registro de Cuenta';
             document.getElementById('auth-btn-submit').innerText = mode === 'login' ? 'Ingresar' : 'Crear Cuenta';
             document.getElementById('auth-name-field').className = mode === 'register' ? 'block' : 'hidden';
@@ -506,10 +512,7 @@
             e.preventDefault();
             const email = document.getElementById('auth-email').value;
             const nameInput = document.getElementById('auth-name').value;
-            currentUser = { 
-                email: email,
-                name: nameInput || email.split('@')[0] 
-            };
+            currentUser = { email: email, name: nameInput || email.split('@')[0] };
 
             document.getElementById('auth-nav-container').innerHTML = `
                 <div class="flex items-center gap-2">
